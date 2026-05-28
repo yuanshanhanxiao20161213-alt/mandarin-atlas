@@ -1,0 +1,6 @@
+screenshots
+*.log
+dev-server*.log
+prod-server*.log
+.next
+node_modules
