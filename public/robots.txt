@@ -1,5 +1,0 @@
-User-agent: *
-Disallow:
-
-Sitemap: https://mandarin-atlas.vercel.app/sitemap.xml
-Sitemap: https://mandarin-atlas.vercel.app/sitemap.txt
