@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 import { Apple, ArrowLeft, ExternalLink, Play, ScanLine } from "lucide-react";
 import { AdSlot } from "@/components/ad-slot";
 import { getQrUrl, getResource, resources } from "@/lib/resources";
+import { seoPages } from "@/lib/seo-pages";
+import { resourceJsonLd } from "@/lib/structured-data";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -21,7 +23,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: `${resource.name} Review and Comparison`,
-    description: `${resource.name}: ${resource.tagline} Compare strengths, limits, platforms, price and public data signals.`
+    description: `${resource.name}: ${resource.tagline} Compare strengths, limits, platforms, price and public data signals.`,
+    alternates: {
+      canonical: `/resources/${resource.slug}`
+    },
+    openGraph: {
+      title: `${resource.name} Review and Comparison`,
+      description: resource.tagline,
+      images: [resource.image]
+    }
   };
 }
 
@@ -29,9 +39,14 @@ export default async function ResourceDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const resource = getResource(slug);
   if (!resource) notFound();
+  const relatedGuides = seoPages.filter((page) => page.resourceSlugs.includes(resource.slug)).slice(0, 4);
 
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(resourceJsonLd(resource)) }}
+      />
       <section className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[0.86fr_1.14fr] lg:items-end lg:px-8">
         <div>
           <Link href="/" className="mb-8 inline-flex items-center gap-2 text-sm text-ink/62 hover:text-ink">
@@ -107,6 +122,24 @@ export default async function ResourceDetailPage({ params }: PageProps) {
           <p className="mt-5 text-sm leading-6 text-ink/55">Traffic source note: {resource.trafficSource}</p>
         </div>
       </section>
+
+      {relatedGuides.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+          <div className="mb-6">
+            <p className="mb-2 text-xs uppercase tracking-[0.24em] text-cinnabar">Related guides</p>
+            <h2 className="font-display text-5xl leading-none">Where {resource.name} fits.</h2>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {relatedGuides.map((guide) => (
+              <Link key={guide.slug} href={`/${guide.slug}`} className="border border-ink/12 bg-paper p-5 transition hover:-translate-y-1 hover:shadow-editorial">
+                <p className="mb-3 text-xs uppercase tracking-[0.2em] text-cinnabar">{guide.eyebrow}</p>
+                <h3 className="font-display text-3xl leading-none">{guide.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-ink/64">{guide.description}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </main>
   );
 }

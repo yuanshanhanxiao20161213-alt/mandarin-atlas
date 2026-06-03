@@ -31,9 +31,9 @@ export function CompareBoard({ resources }: { resources: Resource[] }) {
   return (
     <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       <div className="mb-8 grid gap-4 lg:grid-cols-[0.85fr_1.15fr]">
-        <div>
+        <div className="sr-only">
           <p className="mb-2 text-xs uppercase tracking-[0.24em] text-cinnabar">Comparison board</p>
-          <h1 className="font-display text-6xl leading-none md:text-7xl">Compare the short list.</h1>
+          <h2>Choose up to four resources to compare.</h2>
         </div>
         <div className="flex flex-wrap gap-2 self-end">
           {resources.map((resource) => {

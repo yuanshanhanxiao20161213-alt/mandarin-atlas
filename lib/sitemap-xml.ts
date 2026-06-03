@@ -1,4 +1,4 @@
-import { getSiteUrls } from "@/lib/site-urls";
+import { getSiteUrls, SITE_LAST_MODIFIED } from "@/lib/site-urls";
 
 const escapeXml = (value: string) =>
   value
@@ -13,6 +13,7 @@ export function buildSitemapXml() {
     .map(
       (url) => `  <url>
     <loc>${escapeXml(url)}</loc>
+    <lastmod>${SITE_LAST_MODIFIED}</lastmod>
   </url>`
     )
     .join("\n");

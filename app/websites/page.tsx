@@ -3,15 +3,33 @@ import { AdSlot } from "@/components/ad-slot";
 import { EditorialImage } from "@/components/editorial-image";
 import { ResourceExplorer } from "@/components/resource-explorer";
 import { websiteResources } from "@/lib/resources";
+import { itemListJsonLd } from "@/lib/structured-data";
 
 export const metadata: Metadata = {
   title: "Best Websites to Learn Mandarin",
-  description: "Compare Mandarin learning websites, course platforms, graded readers and tutor marketplaces."
+  description: "Compare Mandarin learning websites, course platforms, graded readers and tutor marketplaces.",
+  alternates: {
+    canonical: "/websites"
+  }
 };
 
 export default function WebsitesPage() {
+  const resources = websiteResources();
+
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            itemListJsonLd(
+              "Best websites to learn Mandarin",
+              "Mandarin learning websites, course platforms, graded readers and tutor marketplaces.",
+              resources
+            )
+          )
+        }}
+      />
       <section className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-end lg:px-8">
         <div>
           <p className="mb-4 text-xs uppercase tracking-[0.24em] text-cinnabar">Web learning platforms</p>
@@ -23,7 +41,7 @@ export default function WebsitesPage() {
         <EditorialImage src="/images/ai/websites-comparison.png" alt="Mandarin website comparison editorial visual" className="aspect-[16/10]" priority />
       </section>
       <AdSlot id="websites-leaderboard-top" variant="leaderboard" />
-      <ResourceExplorer resources={websiteResources()} title="Filter web resources" />
+      <ResourceExplorer resources={resources} title="Filter web resources" />
     </main>
   );
 }

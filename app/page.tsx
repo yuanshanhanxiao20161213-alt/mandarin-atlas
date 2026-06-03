@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { ArrowRight, BarChart3, BookOpenCheck, GraduationCap, ScanLine } from "lucide-react";
 import { AdSlot } from "@/components/ad-slot";
 import { DownloadMatrix } from "@/components/download-matrix";
@@ -8,12 +9,31 @@ import { ResourceExplorer } from "@/components/resource-explorer";
 import { ResourceCard } from "@/components/resource-card";
 import { resources, skillImages } from "@/lib/resources";
 import { seoPages } from "@/lib/seo-pages";
+import { itemListJsonLd } from "@/lib/structured-data";
 
 const featured = ["hellochinese", "pleco", "du-chinese"].map((slug) => resources.find((resource) => resource.slug === slug)!);
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/"
+  }
+};
 
 export default function HomePage() {
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            itemListJsonLd(
+              "Best Mandarin learning resources",
+              "Curated Mandarin learning apps, websites, courses and tutor marketplaces.",
+              resources
+            )
+          )
+        }}
+      />
       <section className="relative overflow-hidden border-b border-ink/10">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-8 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:px-8">
           <div className="relative z-10">

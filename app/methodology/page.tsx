@@ -4,7 +4,10 @@ import { EditorialImage } from "@/components/editorial-image";
 
 export const metadata: Metadata = {
   title: "Data Methodology",
-  description: "How Mandarin Atlas evaluates Chinese learning apps and websites using public data, source links and editorial criteria."
+  description: "How Mandarin Atlas evaluates Chinese learning apps and websites using public data, source links and editorial criteria.",
+  alternates: {
+    canonical: "/methodology"
+  }
 };
 
 export default function MethodologyPage() {

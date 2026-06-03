@@ -21,7 +21,7 @@ export function SiteFooter() {
           <Link href="/apps" className="hover:text-paper">Mobile apps</Link>
           <Link href="/compare" className="hover:text-paper">Comparison board</Link>
           <Link href="/methodology" className="hover:text-paper">Data methodology</Link>
-          {seoPages.slice(0, 4).map((page) => (
+          {seoPages.map((page) => (
             <Link key={page.slug} href={`/${page.slug}`} className="hover:text-paper">
               {page.title}
             </Link>

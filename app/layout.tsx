@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { GoogleAnalytics } from "@/components/google-analytics";
+import { websiteJsonLd } from "@/lib/structured-data";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://mandarin-atlas.vercel.app"),
@@ -22,6 +24,14 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Mandarin Atlas",
     description: "A refined comparison guide for Mandarin learning apps and websites.",
+    url: "https://mandarin-atlas.vercel.app",
+    siteName: "Mandarin Atlas",
+    images: ["/images/ai/hero-mandarin-study.png"]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Mandarin Atlas",
+    description: "Compare Mandarin learning apps, websites, courses and tutors.",
     images: ["/images/ai/hero-mandarin-study.png"]
   },
   verification: {
@@ -38,9 +48,14 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <GoogleAnalytics />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd()) }}
+        />
         <SiteHeader />
         {children}
         <SiteFooter />
+        <Analytics />
       </body>
     </html>
   );

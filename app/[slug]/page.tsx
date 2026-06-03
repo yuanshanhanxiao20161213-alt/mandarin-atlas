@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, SearchCheck } from "lucide-react";
+import { ArrowRight, CheckCircle2, SearchCheck } from "lucide-react";
 import { notFound } from "next/navigation";
 import { AdSlot } from "@/components/ad-slot";
 import { ResourceCard } from "@/components/resource-card";
 import { getSeoPage, getSeoPageResources, seoPages } from "@/lib/seo-pages";
+import { faqJsonLd, itemListJsonLd } from "@/lib/structured-data";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -41,9 +42,23 @@ export default async function SeoLandingPage({ params }: PageProps) {
   if (!page) notFound();
 
   const pageResources = getSeoPageResources(page);
+  const relatedGuides = seoPages
+    .filter((candidate) => candidate.slug !== page.slug)
+    .filter((candidate) => candidate.recommendedSkills.some((skill) => page.recommendedSkills.includes(skill)))
+    .slice(0, 3);
 
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(page)) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(itemListJsonLd(page.title, page.description, pageResources))
+        }}
+      />
       <section className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-end lg:px-8">
         <div>
           <p className="mb-4 inline-flex items-center gap-2 border border-cinnabar/30 bg-cinnabar/8 px-3 py-2 text-xs uppercase tracking-[0.24em] text-cinnabar">
@@ -59,6 +74,7 @@ export default async function SeoLandingPage({ params }: PageProps) {
               </span>
             ))}
           </div>
+          <p className="mt-5 text-sm text-ink/50">Last reviewed: {page.lastReviewed}</p>
         </div>
         <div className="relative aspect-[16/10] overflow-hidden border border-ink/12 bg-ink shadow-editorial">
           <Image src={page.image} alt={`${page.title} visual`} fill priority className="object-cover" />
@@ -72,6 +88,10 @@ export default async function SeoLandingPage({ params }: PageProps) {
           <p className="mb-3 text-xs uppercase tracking-[0.24em] text-cinnabar">Search intent</p>
           <p className="text-base leading-7 text-ink/70">{page.intent}</p>
           <div className="mt-6 border-t border-ink/10 pt-5">
+            <p className="mb-3 text-xs uppercase tracking-[0.2em] text-ink/45">Editorial verdict</p>
+            <p className="text-base leading-7 text-ink/72">{page.verdict}</p>
+          </div>
+          <div className="mt-6 border-t border-ink/10 pt-5">
             <p className="mb-3 text-xs uppercase tracking-[0.2em] text-ink/45">Best-fit skills</p>
             <div className="flex flex-wrap gap-2">
               {page.recommendedSkills.map((skill) => (
@@ -83,6 +103,21 @@ export default async function SeoLandingPage({ params }: PageProps) {
           </div>
         </aside>
         <div className="grid gap-5">
+          <article className="border border-ink/12 bg-paper p-6">
+            <h2 className="font-display text-4xl leading-none">Quick comparison for this query.</h2>
+            <div className="mt-5 grid gap-3">
+              {page.comparisonRows.map((row) => (
+                <div key={row.label} className="grid gap-3 border border-ink/10 bg-ivory p-4 md:grid-cols-[0.75fr_0.85fr_1.4fr]">
+                  <p className="text-xs uppercase tracking-[0.2em] text-ink/45">{row.label}</p>
+                  <p className="flex items-center gap-2 font-medium text-ink">
+                    <CheckCircle2 className="text-jade" size={16} />
+                    {row.bestPick}
+                  </p>
+                  <p className="text-sm leading-6 text-ink/66">{row.note}</p>
+                </div>
+              ))}
+            </div>
+          </article>
           {page.sections.map((section) => (
             <article key={section.heading} className="border border-ink/12 bg-paper p-6">
               <h2 className="font-display text-4xl leading-none">{section.heading}</h2>
@@ -125,6 +160,24 @@ export default async function SeoLandingPage({ params }: PageProps) {
           </div>
         </div>
       </section>
+
+      {relatedGuides.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+          <div className="mb-6">
+            <p className="mb-2 text-xs uppercase tracking-[0.24em] text-cinnabar">Related long-tail guides</p>
+            <h2 className="font-display text-5xl leading-none">Keep narrowing the search.</h2>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            {relatedGuides.map((guide) => (
+              <Link key={guide.slug} href={`/${guide.slug}`} className="border border-ink/12 bg-paper p-5 transition hover:-translate-y-1 hover:shadow-editorial">
+                <p className="mb-3 text-xs uppercase tracking-[0.2em] text-cinnabar">{guide.eyebrow}</p>
+                <h3 className="font-display text-3xl leading-none">{guide.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-ink/64">{guide.description}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </main>
   );
 }

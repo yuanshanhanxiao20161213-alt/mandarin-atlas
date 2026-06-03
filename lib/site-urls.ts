@@ -2,6 +2,7 @@ import { resources } from "@/lib/resources";
 import { seoPages } from "@/lib/seo-pages";
 
 export const SITE_URL = "https://mandarin-atlas.vercel.app";
+export const SITE_LAST_MODIFIED = "2026-06-03";
 
 const staticPaths = ["", "apps", "websites", "compare", "methodology"];
 
